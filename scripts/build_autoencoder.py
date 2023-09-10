@@ -24,14 +24,13 @@ x_test = x_test[0:5000].astype('float32') / 255.
 print (x_train.shape)
 
 input_layer = layers.Input(shape=(input_dim,input_dim,1), name="input")
-input_layer = layers.Input(shape=(input_dim,input_dim,1), name="input")
 
 encoder = keras.Sequential(
     [         
         input_layer,            
-        layers.Conv2D(4, (3, 3), activation='leaky_relu', padding='same'),      
-        layers.MaxPool2D(),
-        layers.Dense(8, use_bias=True, activation='leaky_relu', activity_regularizer=regularizers.L1()),
+        layers.Conv2D(8, (3, 3), activation='leaky_relu', padding='same'),      
+        layers.MaxPool2D((2,2)),
+        layers.Dense(4, use_bias=True, activation='leaky_relu', activity_regularizer=regularizers.L1(), bias_regularizer=regularizers.L1()),
     ], name="encoder"
 )
 
@@ -49,8 +48,6 @@ model = keras.Sequential(
         decoder
     ]
 )
-
-model.summary()
 
 model.summary()
 

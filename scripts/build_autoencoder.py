@@ -22,22 +22,24 @@ x_train = x_train.astype('float32') / 255.
 x_test = x_test[0:5000].astype('float32') / 255.
 
 print (x_train.shape)
-
 input_layer = layers.Input(shape=(input_dim,input_dim,1), name="input")
 
 encoder = keras.Sequential(
     [         
-        input_layer,            
-        layers.Conv2D(8, (3, 3), activation='leaky_relu', padding='same'),      
-        layers.MaxPool2D((2,2)),
-        layers.Dense(4, use_bias=True, activation='leaky_relu', activity_regularizer=regularizers.L1(), bias_regularizer=regularizers.L1()),
+        input_layer,                    
+        layers.Conv2D(8, (4, 4), activation='leaky_relu', padding='same'),              
+        layers.MaxPooling2D((2,2)),                        
+        layers.Dense(8, use_bias=True, activation='leaky_relu', activity_regularizer=regularizers.L1(10e-3), bias_regularizer=regularizers.L1(10e-3)),
+        layers.Dense(16, use_bias=True, activation='leaky_relu', activity_regularizer=regularizers.L1(10e-3), bias_regularizer=regularizers.L1(10e-3)),
+        layers.Dense(2, use_bias=True, activation='leaky_relu', activity_regularizer=regularizers.L1(10e-3), bias_regularizer=regularizers.L1(10e-3)),
     ], name="encoder"
 )
 
-decoder = keras.Sequential(
-    [
+decoder = keras.Sequential(    [
         layers.UpSampling2D((2,2)),
-        layers.Conv2D(1, kernel_size=(4, 4), activation='sigmoid', padding='same')
+        layers.Dense(20, use_bias=True, activation='leaky_relu', activity_regularizer=regularizers.L1(10e-3), bias_regularizer=regularizers.L1(10e-3)),
+        layers.Dense(10, use_bias=True, activation='leaky_relu', activity_regularizer=regularizers.L1(10e-3), bias_regularizer=regularizers.L1(10e-3)),
+        layers.Conv2D(1, (4, 4), activation='sigmoid', padding='same')
     ], name="decoder"
 )
 
@@ -50,7 +52,6 @@ model = keras.Sequential(
 )
 
 model.summary()
-
 
 model.compile(optimizer="adam", loss=keras.losses.Huber(
     delta=1.0, reduction="sum_over_batch_size", name="huber_loss")
